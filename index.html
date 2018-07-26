@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>
+            Contact Address Book by Juan C. Perez
+        </title>
+        <!--     Fonts and icons     -->
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="./assets/css/material-kit.css?v=2.0.1">
+        <link rel="stylesheet" href="./assets/css/parsley.css">
+        <!-- Documentation extras -->
+        <!-- CSS Just for demo purpose, don't include it in your project -->
+        <link href="./assets/assets-for-demo/vertical-nav.css" rel="stylesheet" />
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-route.min.js"></script>
+        <script src="./assets/js/angular-service-provider.js"></script>
+        <script src="./assets/js/plugins/parsley.min.js"></script>
+     </head>
+    <body>
+        <div class="global-wrapper" ng-app="myApp">
+
+              <!-- nav section -->
+            
+            <nav class="navbar navbar-expand-lg bg-info" ng-controller="navCtrl">
+                        <div class="container">
+                            <div class="navbar-translate">
+                                <a class="navbar-brand" href="#"><i class="material-icons">face</i> My Contacts</a>
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                    <span class="navbar-toggler-icon"></span>
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse">
+                                <ul class="navbar-nav ml-auto">
+                                    <li style="margin-right: 5px" class="active nav-item"  ng-repeat="navLink in nav.navItems" ng-class="{active : $index === nav.selectedIndex}">
+                                        <a class="nav-link bg-success" ng-click="nav.navClick($index)" ng-href="#/{{navLink}}"><i class="material-icons">account_circle</i> {{navLink}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+
+              <div class="container">
+                <div class="row panel panel-primary" ng-controller="homeCtrl">
+
+
+                  <!--     contact list   	 -->
+                  <div class="col-md-1"></div>
+                  <div class="col-md-5 panel-body">
+                      <div class="card card-profile" style="max-width: 360px">
+                          <div class="card-body ">
+                              <h3><span class="btn btn-info btn-raised btn-fab btn-round"><i class="material-icons">search</i></span> Contacts List</h3> 
+                              <input class="form-control" placeholder="Seach Your Contacts" type="text" ng-model="searchText">
+                            <table style="margin-top:20px" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="contact in contacts | orderBy: 'name' | filter: searchText">
+                                        <td style="padding-top:25px">{{contact.name}}</td>
+                                        <td class="td-actions text-right">
+                                            <contact></contact>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!--   ng-view below       -->
+                  <div class="col-md-6">
+                    <div class="list-group panel-body">
+                      <div ng-view></div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+                <!--  html templates used by angular, usually in separate files -->
+                <script type="text/ng-template" id="default.html">
+                  <div class="alert alert-success" role="alert" ng-class="{hidden: !removed}"> {{removed}}</div>
+                  <div class="list-group-item text-center"></div>
+                 <div class="info">
+                    <div class="icon icon-info">
+                        <i class="material-icons">chat</i>
+                    </div>
+                    <h4 class="info-title">Contact Details</h4>
+                    <p>Please select a contact from the left to view details</p>
+                 </div>
+                </script>
+
+                  <!-- 	template for displaying a contacts info	 -->
+                <script type="text/ng-template" id="contact_info.html">
+                    <div class="col-sm-12">
+                        <div class="card card-profile" style="max-width: 360px">
+                                  <div class="card-header card-header-image">
+                                        <a href="#">
+                                            <img class="img" src="{{currentContact.url}}">
+                                        </a>
+                                  </div>
+
+                            <div class="card-body ">
+                                <h4 class="card-title">{{currentContact.name}}</h4>
+                                <h6 class="card-category text-gray"><span class="fa fa-map-marker fa-fw text-muted"></span> {{currentContact.address}}</h6>
+                                <h6 class="card-category text-gray"><span class="fa fa-phone fa-fw text-muted"></span> {{currentContact.phone}}</h6>
+                                <h6 class="card-category text-gray"><span class="fa fa-envelope fa-fw text-muted"></span> {{currentContact.email}}</h6>
+                            </div>
+                            <div class="card-footer justify-content-center">
+                                <a ng-href="#/edit/{{contacts.indexOf(currentContact)}}">
+                                  <button class="btn btn-success">
+                                    <i class="material-icons">edit</i><span> Edit</span>
+                                  </button>
+                                </a>
+                                <a href="#/">
+                                    <button class="btn btn-danger" ng-click="removeContact(currentContact)">
+                                        <i class="material-icons">delete</i><span> Remove</span>
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+
+            <!--   template used for both adding a new contact and editing an existing contact   -->
+                <script type="text/ng-template" id="contact_form.html">
+                  <div ng-controller="addContactCtrl">
+                      <div class="card card-profile" style="max-width: 360px">
+                          <div class="card-body ">
+                              <form name="contactForm" data-parsley-validate>
+                            <div class="list-group-item">
+                              <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="name">Name: </label> <input id="name" class="form-control" type="text" ng-model="currentContact.name" data-parsley-trigger="change" required> 
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">Address:</label> <input id="address" class="form-control" type="text" ng-model="currentContact.address" data-parsley-trigger="change" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone:</label> <input id="phone" class="form-control" type="text" ng-model="currentContact.phone" data-parsley-minlength="10" data-parsley-trigger="change" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email:</label> <input id="email" class="form-control" type="email" ng-model="currentContact.email" data-parsley-trigger="change" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="url">Profile Pic Url:</label> <input id="url" class="form-control" type="text" ng-model="currentContact.url"> 
+                                    </div>
+                              </div>
+                            </div>
+                            
+                            <div class="card-footer">
+                              <a ng-if="path === '/add new contact' " ng-href="#/contact-info/{{ contacts.length - 1 }}" ng-click="addContact()">
+                                <button class="btn btn-success">
+                                 <i class="material-icons">save</i>
+                                 <span>Add</span>
+                                </button>
+                              </a>
+
+                              <a ng-if="path !== '/add new contact'" ng-href="#/contact-info/{{index}}">
+                                <button class="btn btn-info">
+                                 <i class="material-icons">save</i><span> Save Edits</span>
+                                </button>
+                              </a>
+
+                              <a href="#/">
+                                <button class="btn btn-danger">
+                                  <i class="material-icons">close</i><span>  Cancel</span>
+                                </button>
+                              </a>
+                            </div>
+                                  </form>
+                          </div>
+                    </div>
+                  </div>
+                </script>
+
+            <!--      template used for the ng-repeat in the contact list        -->
+                <script type="text/ng-template" id="index.html">
+                 <a ng-href="#/contact-info/{{contacts.indexOf(contact)}}" rel="tooltip" class="btn btn-info">
+                    <i class="material-icons">remove_red_eye</i> View
+                 </a>
+                </script>
+            
+            <!--   Core JS Files   -->
+            <script src="./assets/js/core/jquery.min.js"></script>
+            <script src="./assets/js/plugins/parsley.min.js"></script>
+            <script src="./assets/js/core/popper.min.js"></script>
+            <script src="./assets/js/bootstrap-material-design.js"></script>
+            <!--  Plugin for Date Time Picker and Full Calendar Plugin  -->
+            <script src="./assets/js/plugins/moment.min.js"></script>
+            <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
+            <script src="./assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
+            <!--	Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+            <script src="./assets/js/plugins/nouislider.min.js"></script>
+            <!-- Material Kit Core initialisations of plugins and Bootstrap Material Design Library -->
+            <script src="./assets/js/material-kit.js?v=2.0.1"></script>
+            <!-- Fixed Sidebar Nav - js With initialisations For Demo Purpose, Don't Include it in your project -->
+            <script src="./assets/assets-for-demo/js/material-kit-demo.js"></script>
+      </div>
+</body>        
+</html>
